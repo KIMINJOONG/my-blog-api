@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  nestjs:
+    build:
+      context: .
+      dockerfile: dockerfiles/nestjs.dockerfile
+    volumes:
+      - ./my-blog-server:/app
+    ports:
+      - 4000:3000
+    depends_on:
+      - db
+  npx:
+    build:
+      context: .
+      dockerfile: dockerfiles/npx.dockerfile
+    volumes:
+      - ./:/app
+  npm:
+    build:
+      context: .
+      dockerfile: dockerfiles/npm.dockerfile
+    volumes:
+      - ./my-blog-server:/app
+  db:
+    build:
+      context: .
+      dockerfile: dockerfiles/mysql.dockerfile
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql/conf.d:/etc/mysql/conf.d
+      - ./mysql/data:/var/lib/mysql
+    env_file:
+      - ./env/mysql.env
+    command: # 명령어 실행
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
