@@ -1,23 +1,28 @@
 import {
-  Bind,
   Controller,
   Post,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { ConfigService } from '@nestjs/config';
 import { ImagesService } from './images.service';
-import { multerS3Options } from 'src/utils/multer.option';
-import { IFile } from 'src/types/aws';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { CreateBodyImageMulterOptions } from 'src/utils/multer.option';
 
 @Controller('images')
 export class ImagesController {
-  constructor(private readonly imagesService: ImagesService) {}
+  constructor(
+    private readonly imagesService: ImagesService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Post('/upload')
-  @UseInterceptors(FilesInterceptor('images', null, multerS3Options))
-  @Bind(UploadedFiles())
-  async uploadFile(files: IFile[]): Promise<string[]> {
-    return await files.map((v) => v.key);
+  @UseInterceptors(FilesInterceptor('file'))
+  async uploadFile(
+    @UploadedFiles() files: Express.MulterS3.File[],
+  ): Promise<string[]> {
+    this.imagesService.uploadFiles(files);
+    return [''];
+    // return await files.map((v) => v.key);
   }
 }

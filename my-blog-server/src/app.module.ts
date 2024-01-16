@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SequelizeModule } from '@nestjs/sequelize';
+import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import * as Joi from 'joi';
-import { User } from './users/user.entity';
+import { ImagesModule } from './images/images.module';
 import { Post } from './posts/post.entity';
 import { PostsModule } from './posts/post.module';
+import { User } from './users/user.entity';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { PostsModule } from './posts/post.module';
       inject: [ConfigService],
     }),
     PostsModule,
+    ImagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
