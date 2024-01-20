@@ -8,6 +8,7 @@ import { ImagesModule } from './images/images.module';
 import { Post } from './posts/post.entity';
 import { PostsModule } from './posts/post.module';
 import { User } from './users/user.entity';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { User } from './users/user.entity';
     }),
     PostsModule,
     ImagesModule,
+    MulterModule,
   ],
   controllers: [AppController],
   providers: [AppService],

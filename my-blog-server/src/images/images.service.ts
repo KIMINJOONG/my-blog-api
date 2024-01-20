@@ -7,6 +7,6 @@ export class ImagesService {
   }
   async uploadFiles(files: Express.MulterS3.File[]): Promise<string[]> {
     console.log('files: ', files);
-    return [''];
+    return files.map((file) => file.key);
   }
 }
