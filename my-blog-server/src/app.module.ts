@@ -9,6 +9,8 @@ import { Post } from './posts/post.entity';
 import { PostsModule } from './posts/post.module';
 import { User } from './users/user.entity';
 import { MulterModule } from '@nestjs/platform-express';
+import { Category } from './categories/category.entity';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -32,13 +34,14 @@ import { MulterModule } from '@nestjs/platform-express';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        models: [User, Post],
+        models: [User, Post, Category],
       }),
       inject: [ConfigService],
     }),
     PostsModule,
     ImagesModule,
     MulterModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

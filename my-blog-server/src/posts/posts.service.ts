@@ -5,21 +5,23 @@ import { FindAndCountOptions } from 'sequelize';
 import { Post } from './post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { Category } from 'src/categories/category.entity';
+import { CategoriesService } from 'src/categories/categories.service';
 
 @Injectable()
 export class PostsService {
-  constructor() {}
+  constructor(private readonly categoriesService: CategoriesService) {}
   async getAll(query: GetPostDto): Promise<IPostsResponse> {
     const queryObject: FindAndCountOptions<any> = {
-      //   include: [{ model: Category }],
+      include: [{ model: Category }],
       attributes: ['id', 'title', 'view', 'createdAt'],
       where: {},
       order: [['id', 'desc']],
       limit: parseInt(query.limit),
     };
-    // if (query.category) {
-    //   queryObject.where = { categoryId: query.category };
-    // }
+    if (query.categoryId) {
+      queryObject.where = { categoryId: query.categoryId };
+    }
 
     let offset = 0;
     if (query.page && query.limit) {
@@ -36,7 +38,7 @@ export class PostsService {
     try {
       const post: Post = await Post.findOne({
         where: { id },
-        // include: ['category'],
+        include: ['category'],
       });
       if (!post) {
         throw new NotFoundException(`Board with ID ${post.id} not found.`);
@@ -63,8 +65,8 @@ export class PostsService {
         content: postData.content,
       });
 
-      //   const category = await this.categoriesService.getOne(1);
-      //   board.category = category;
+      const category = await this.categoriesService.getOne(postData.categoryId);
+      post.category = category;
 
       //   if (hashtags) {
       //     await Promise.all(

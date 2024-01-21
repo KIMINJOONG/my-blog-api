@@ -1,5 +1,5 @@
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 @ApiTags('게시글 생성 요청 데이터')
 export class CreatePostDto {
@@ -15,7 +15,7 @@ export class CreatePostDto {
   //   @ApiProperty({ type: String, description: '해쉬태그' })
   //   readonly hashtags;
 
-  //   @IsNumber()
-  //   @ApiProperty({ type: Array, description: '카테고리 id' })
-  //   readonly categoryId: number;
+  @IsNumber()
+  @ApiProperty({ type: Array, description: '카테고리 id' })
+  readonly categoryId: number;
 }
