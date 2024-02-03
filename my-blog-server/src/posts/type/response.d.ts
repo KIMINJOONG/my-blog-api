@@ -1,6 +1,6 @@
-import { Post } from '../post.entity';
+import { PostDto } from '../dto/post.dto';
 
 export interface IPostsResponse {
   totalCount: number;
-  posts: Post[];
+  posts: PostDto[];
 }

@@ -7,6 +7,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Category } from 'src/categories/category.entity';
 import { CategoriesService } from 'src/categories/categories.service';
+import { PostDto } from './dto/post.dto';
 
 @Injectable()
 export class PostsService {
@@ -14,7 +15,7 @@ export class PostsService {
   async getAll(query: GetPostDto): Promise<IPostsResponse> {
     const queryObject: FindAndCountOptions<any> = {
       include: [{ model: Category }],
-      attributes: ['id', 'title', 'view', 'createdAt'],
+      attributes: ['id', 'title', 'content', 'view', 'createdAt'],
       where: {},
       order: [['id', 'desc']],
       limit: parseInt(query.limit),
@@ -31,7 +32,25 @@ export class PostsService {
     queryObject.offset = offset;
 
     const { count, rows } = await Post.findAndCountAll(queryObject);
-    return { totalCount: count, posts: rows };
+
+    const postDtos: PostDto[] = [];
+    const urlRegex = '<img[^>]*src=["\']?([^>"\']+)["\']?[^>]*>';
+    for (const post of rows) {
+      const postDto = new PostDto();
+      postDto.id = post.id;
+      postDto.title = post.title;
+      if (post.content?.match(urlRegex) && post.content?.match(urlRegex)[1]) {
+        const url = post.content?.match(urlRegex)[1];
+        postDto.thumbnail = url;
+      }
+      postDto.view = post.view;
+      postDto.categoryId = post.categoryId;
+      postDto.category = post.category;
+      postDto.createdAt = post.createdAt;
+      postDtos.push(postDto);
+    }
+
+    return { totalCount: count, posts: postDtos };
   }
 
   async getOne(id: number): Promise<Post> {
